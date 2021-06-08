@@ -1,5 +1,6 @@
 import connexion
 import six
+import datetime
 
 from swagger_server.models.http_problem import HTTPProblem  # noqa: E501
 from swagger_server.models.inline_response200 import InlineResponse200  # noqa: E501
@@ -7,7 +8,30 @@ from swagger_server.models.inline_response2001 import InlineResponse2001  # noqa
 from swagger_server.models.inline_response2002 import InlineResponse2002  # noqa: E501
 from swagger_server.models.vehiculo import Vehiculo  # noqa: E501
 from swagger_server import util
+from flask import make_response
 
+example = [
+    {
+        'id': 1743,
+        'clientId': 28,
+        'matricula': '6452-ABC',
+        'marca': 'Audi',
+        'modelo': 'a7',
+        'color': 'Gris',
+        'año': 2012,
+        'VIN': '3C8FY68B72T322831'
+    },
+    {
+        'id': 5623,
+        'clientId': 21,
+        'matricula': '1234-JPG',
+        'marca': 'Ford',
+        'modelo': 'focus',
+        'color': 'rojo',
+        'año': 2020,
+        'VIN': '6J8FY68B72T322831'
+    }
+]
 
 def taller_clientid_get(client_id):  # noqa: E501
     """Obtener los vehículos de un cliente concreto.
@@ -43,7 +67,7 @@ def taller_vehiculo_cget():  # noqa: E501
 
     :rtype: InlineResponse200
     """
-    return 'do some magic!'
+    return example
 
 
 def taller_vehiculo_options():  # noqa: E501
