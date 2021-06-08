@@ -1,0 +1,850 @@
+openapi: 3.0.3
+info:
+  title: Gestión de Vehículos
+  description: API para la gestión de Vehículos de un taller
+  contact:
+    name: Grupo 4
+  version: 1.0.0
+servers:
+- url: http://127.0.0.1/api/v1
+  description: Servidor local
+tags:
+- name: 🚗 Vehículo
+  description: Vehículo gestionado por el taller.
+paths:
+  /vehiculo:
+    get:
+      tags:
+      - 🚗 Vehículo
+      summary: Obtener la lista de vehículos.
+      description: Permite obtener la lista de todos los vehículos del taller.
+      operationId: taller_vehiculo_cget
+      responses:
+        "200":
+          description: "`OK`: La lista de los vehículos puede mostrarse correctamente."
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              examples:
+                vehiculosExamples:
+                  $ref: '#/components/examples/vehiculos'
+        "401":
+          description: "`UNAUTHORIZED`: No se han verificado correctamente las credenciales."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-401:
+                  $ref: '#/components/examples/response-http-401'
+        "404":
+          description: "`NOT FOUND`: recurso no disponible"
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-404:
+                  $ref: '#/components/examples/response-http-404'
+      x-openapi-router-controller: swagger_server.controllers.vehculo_controller
+    post:
+      tags:
+      - 🚗 Vehículo
+      summary: Registrar un nuevo vehículo en el taller.
+      description: Genera un nuevo vehículo para añadir a la lista de vehículos gestionados
+        por el taller.
+      operationId: taller_vehiculo_post
+      requestBody:
+        $ref: '#/components/requestBodies/vehiculoRB'
+      responses:
+        "201":
+          description: Vehículo añadido.
+          headers:
+            Location:
+              $ref: '#/components/headers/Location'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehiculo'
+        "400":
+          description: "`BAD REQUEST`: Los datos introducidos no son válidos o falta\
+            \ algún valor."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-400:
+                  $ref: '#/components/examples/response-http-400'
+        "401":
+          description: "`UNAUTHORIZED`: No se han verificado correctamente las credenciales."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-401:
+                  $ref: '#/components/examples/response-http-401'
+        "403":
+          description: "`FORBIDDEN`: El servidor entendió tu petición pero se niega\
+            \ a autorizarla."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-403:
+                  $ref: '#/components/examples/response-http-403'
+        "422":
+          description: "`UNPROCESSABLE ENTITY`: falta la referencia o las unidades."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-422:
+                  $ref: '#/components/examples/response-http-422'
+      x-openapi-router-controller: swagger_server.controllers.vehculo_controller
+    options:
+      tags:
+      - 🚗 Vehículo
+      summary: Proporcionar los métodos HTTP soportados para la lista de vehículos.
+      description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados
+        (separados por comas).
+      operationId: taller_vehiculo_options
+      responses:
+        "200":
+          description: Cabezera `Allow` <Cuerpo de la respuesta vacío>
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+      x-openapi-router-controller: swagger_server.controllers.vehculo_controller
+  /vehiculo/{vehiculoId}:
+    get:
+      tags:
+      - 🚗 Vehículo
+      summary: Obtener un vehículo concreto.
+      description: Permite obtener un vehículo perteneciente a la lista de todos los
+        vehículos del taller.
+      operationId: taller_vehiculoid_get
+      parameters:
+      - name: vehiculoId
+        in: path
+        description: ID del vehículo.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          pattern: ^\d+$
+          type: integer
+      responses:
+        "200":
+          description: "`OK`: El vehículo seleccionado puede mostrarse correctamente."
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              examples:
+                vehiculoExamples:
+                  $ref: '#/components/examples/vehiculo'
+        "401":
+          description: "`UNAUTHORIZED`: No se han verificado correctamente las credenciales."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-401:
+                  $ref: '#/components/examples/response-http-401'
+        "404":
+          description: "`NOT FOUND`: recurso no disponible"
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-404:
+                  $ref: '#/components/examples/response-http-404'
+      x-openapi-router-controller: swagger_server.controllers.vehculo_controller
+    put:
+      tags:
+      - 🚗 Vehículo
+      summary: Modificar un vehículo de la lista.
+      description: "Permite realizar la modificación de los atributos uno de los vehí\
+        culos gestionados por el taller, seleccionado mediante su ID."
+      operationId: taller_vehiculoid_put
+      parameters:
+      - name: vehiculoId
+        in: path
+        description: ID del vehículo.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          pattern: ^\d+$
+          type: integer
+      requestBody:
+        $ref: '#/components/requestBodies/vehiculoRB'
+      responses:
+        "200":
+          description: "`OK`: El vehículo seleccionado se ha modificado correctamente."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehiculo'
+              examples:
+                vehiculoExamples:
+                  $ref: '#/components/examples/vehiculo'
+        "400":
+          description: "`BAD REQUEST`: Los datos introducidos no son válidos o falta\
+            \ algún valor."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-400:
+                  $ref: '#/components/examples/response-http-400'
+        "401":
+          description: "`UNAUTHORIZED`: No se han verificado correctamente las credenciales."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-401:
+                  $ref: '#/components/examples/response-http-401'
+        "403":
+          description: "`FORBIDDEN`: El servidor entendió tu petición pero se niega\
+            \ a autorizarla."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-403:
+                  $ref: '#/components/examples/response-http-403'
+        "404":
+          description: "`NOT FOUND`: recurso no disponible"
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-404:
+                  $ref: '#/components/examples/response-http-404'
+      x-openapi-router-controller: swagger_server.controllers.vehculo_controller
+    delete:
+      tags:
+      - 🚗 Vehículo
+      summary: Eliminar un vehículo de la lista.
+      description: "Perimite eliminar un vehículo de la lista de los vehículos gestionados\
+        \ por el taller, utilizando su ID."
+      operationId: taller_vehiculoid_delete
+      parameters:
+      - name: vehiculoId
+        in: path
+        description: ID del vehículo.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          pattern: ^\d+$
+          type: integer
+      responses:
+        "204":
+          description: El vehículo ha sido eliminado de la lista. <Cuerpo de la respuesta
+            vacío>
+        "401":
+          description: "`UNAUTHORIZED`: No se han verificado correctamente las credenciales."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-401:
+                  $ref: '#/components/examples/response-http-401'
+        "404":
+          description: "`NOT FOUND`: recurso no disponible"
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-404:
+                  $ref: '#/components/examples/response-http-404'
+      x-openapi-router-controller: swagger_server.controllers.vehculo_controller
+    options:
+      tags:
+      - 🚗 Vehículo
+      summary: Proporcionar los métodos HTTP soportados para un único vehículo.
+      description: Devuelve una cabecera `Allow` con la lista de métodos HTTP soportados
+        (separados por comas).
+      operationId: taller_vehiculoid_options
+      parameters:
+      - name: vehiculoId
+        in: path
+        description: ID del vehículo.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          pattern: ^\d+$
+          type: integer
+      responses:
+        "204":
+          description: Cabezera `Allow` <Cuerpo de la respuesta vacío>
+          headers:
+            Allow:
+              $ref: '#/components/headers/Allow'
+      x-openapi-router-controller: swagger_server.controllers.vehculo_controller
+  /vehiculo/clientId/{clientId}:
+    get:
+      tags:
+      - 🚗 Vehículo
+      summary: Obtener los vehículos de un cliente concreto.
+      description: Permite obtener un vehículo perteneciente a la lista de todos los
+        vehículos de un cliente del taller.
+      operationId: taller_clientid_get
+      parameters:
+      - name: clientId
+        in: path
+        description: ID del cliente.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          pattern: ^\d+$
+          type: integer
+      responses:
+        "200":
+          description: "`OK`: El/Los vehículo seleccionado puede mostrarse correctamente."
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+              examples:
+                vehiculoExamples:
+                  $ref: '#/components/examples/vehiculo'
+        "400":
+          description: "`BAD REQUEST`: Los datos introducidos no son válidos o falta\
+            \ algún valor."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-400:
+                  $ref: '#/components/examples/response-http-400'
+        "401":
+          description: "`UNAUTHORIZED`: No se han verificado correctamente las credenciales."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-401:
+                  $ref: '#/components/examples/response-http-401'
+        "404":
+          description: "`NOT FOUND`: recurso no disponible"
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-404:
+                  $ref: '#/components/examples/response-http-404'
+      x-openapi-router-controller: swagger_server.controllers.vehculo_controller
+  /vehiculo/VIN/{VIN}:
+    get:
+      tags:
+      - 🚗 Vehículo
+      summary: Obtener el vehículo con un VIN concreto.
+      description: Permite obtener un vehículo según su identificador único.
+      operationId: taller_vin_get
+      parameters:
+      - name: VIN
+        in: path
+        description: Número de identificación del vehículo (Vehicle Identification
+          Number).
+        required: true
+        style: simple
+        explode: false
+        schema:
+          pattern: "[0-9A-Z]*"
+          type: string
+      responses:
+        "200":
+          description: "`OK`: El/Los vehículo seleccionado puede mostrarse correctamente."
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_2'
+              examples:
+                vehiculoExamples:
+                  $ref: '#/components/examples/vehiculo'
+        "401":
+          description: "`UNAUTHORIZED`: No se han verificado correctamente las credenciales."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-401:
+                  $ref: '#/components/examples/response-http-401'
+        "404":
+          description: "`NOT FOUND`: recurso no disponible"
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-404:
+                  $ref: '#/components/examples/response-http-404'
+      x-openapi-router-controller: swagger_server.controllers.vehculo_controller
+  /vehiculo/matricula/{matricula}:
+    get:
+      tags:
+      - 🚗 Vehículo
+      summary: Obtener un vehículo concreto a partir de su matrícula
+      description: Permite obtener un vehículo perteneciente a la lista de todos los
+        vehículos del taller indicando la matrícula del vehículo.
+      operationId: taller_matricula_get
+      parameters:
+      - name: matricula
+        in: path
+        description: Matrícula del vehículo
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "`OK`: El vehículo seleccionado puede mostrarse correctamente."
+          headers:
+            ETag:
+              $ref: '#/components/headers/ETag'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+              examples:
+                vehiculoExamples:
+                  $ref: '#/components/examples/vehiculo'
+        "401":
+          description: "`UNAUTHORIZED`: No se han verificado correctamente las credenciales."
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-401:
+                  $ref: '#/components/examples/response-http-401'
+        "404":
+          description: "`NOT FOUND`: recurso no disponible"
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/HTTP_Problem'
+              examples:
+                response-http-404:
+                  $ref: '#/components/examples/response-http-404'
+      x-openapi-router-controller: swagger_server.controllers.vehculo_controller
+components:
+  schemas:
+    Vehiculo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Identificador único del vehículo.
+          format: int32
+          readOnly: true
+        clientId:
+          type: integer
+          description: Identificador único del cliente que haya llevado el vehículo
+            al taller.
+          format: int32
+        matricula:
+          type: string
+          description: Matrícula del vehículo.
+        marca:
+          type: string
+          description: Marca del vehículo.
+        modelo:
+          type: string
+          description: Modelo del vehículo.
+        color:
+          type: string
+          description: Color del vehículo.
+        año:
+          pattern: "[0-9]{4}"
+          type: number
+          description: Año de fabricación del vehículo.
+        VIN:
+          pattern: "[0-9A-Z]*"
+          type: string
+          description: Número de identificación del vehículo (Vehicle Identification
+            Number).
+      description: Vehículos que se registran en el sistema del taller.
+      example:
+        id: 1743
+        clientId: 28
+        matricula: 6452-ABC
+        marca: Audi
+        modelo: a7
+        color: Gris
+        año: 2012
+        VIN: 3C8FY68B72T322831
+    HTTP_Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          description: "A URI reference [RFC3986] that identifies the problem type"
+          format: uri
+        title:
+          type: string
+          description: short human-readable summary of the problem type
+        status:
+          type: number
+          description: HTTP status code
+        detail:
+          type: string
+          description: human-readable explanation specific to this occurrence of the
+            problem
+        instance:
+          type: string
+          description: A URI reference that identifies the specific occurrence of
+            the problem.  It may or may not yield further information if dereferenced
+          format: uri
+      description: Problem Details for HTTP APIs
+      externalDocs:
+        url: https://tools.ietf.org/html/rfc7807
+    inline_response_200:
+      type: object
+      properties:
+        vehiculos:
+          type: array
+          description: Array de los vehículos gestionados por el taller.
+          items:
+            $ref: '#/components/schemas/Vehiculo'
+      example:
+        vehiculos:
+        - id: 1743
+          clientId: 28
+          matricula: 6452-ABC
+          marca: Audi
+          modelo: a7
+          color: Gris
+          año: 2012
+          VIN: 3C8FY68B72T322831
+        - id: 1743
+          clientId: 28
+          matricula: 6452-ABC
+          marca: Audi
+          modelo: a7
+          color: Gris
+          año: 2012
+          VIN: 3C8FY68B72T322831
+    inline_response_200_1:
+      type: object
+      properties:
+        vehiculos:
+          type: array
+          description: Array de los vehículos de un cliente gestionados por el taller.
+          items:
+            $ref: '#/components/schemas/Vehiculo'
+      example:
+        vehiculos:
+        - id: 1743
+          clientId: 28
+          matricula: 6452-ABC
+          marca: Audi
+          modelo: a7
+          color: Gris
+          año: 2012
+          VIN: 3C8FY68B72T322831
+        - id: 1743
+          clientId: 28
+          matricula: 6452-ABC
+          marca: Audi
+          modelo: a7
+          color: Gris
+          año: 2012
+          VIN: 3C8FY68B72T322831
+    inline_response_200_2:
+      type: object
+      properties:
+        vehiculos:
+          type: array
+          description: El vehículo con un VIN concreto.
+          items:
+            $ref: '#/components/schemas/Vehiculo'
+      example:
+        vehiculos:
+        - id: 1743
+          clientId: 28
+          matricula: 6452-ABC
+          marca: Audi
+          modelo: a7
+          color: Gris
+          año: 2012
+          VIN: 3C8FY68B72T322831
+        - id: 1743
+          clientId: 28
+          matricula: 6452-ABC
+          marca: Audi
+          modelo: a7
+          color: Gris
+          año: 2012
+          VIN: 3C8FY68B72T322831
+  responses:
+    Response_400:
+      description: "`BAD REQUEST`: Los datos introducidos no son válidos o falta algú\
+        n valor."
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/HTTP_Problem'
+          examples:
+            response-http-400:
+              $ref: '#/components/examples/response-http-400'
+    Response_401:
+      description: "`UNAUTHORIZED`: No se han verificado correctamente las credenciales."
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/HTTP_Problem'
+          examples:
+            response-http-401:
+              $ref: '#/components/examples/response-http-401'
+    Response_403:
+      description: "`FORBIDDEN`: El servidor entendió tu petición pero se niega a\
+        \ autorizarla."
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/HTTP_Problem'
+          examples:
+            response-http-403:
+              $ref: '#/components/examples/response-http-403'
+    Response_404:
+      description: "`NOT FOUND`: recurso no disponible"
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/HTTP_Problem'
+          examples:
+            response-http-404:
+              $ref: '#/components/examples/response-http-404'
+    Response_422:
+      description: "`UNPROCESSABLE ENTITY`: falta la referencia o las unidades."
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/HTTP_Problem'
+          examples:
+            response-http-422:
+              $ref: '#/components/examples/response-http-422'
+  parameters:
+    clientId:
+      name: clientId
+      in: path
+      description: ID del cliente.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        pattern: ^\d+$
+        type: integer
+    ifMatchParam:
+      name: If-Match
+      in: header
+      description: ETag del recurso que se desea modificar
+      required: true
+      style: simple
+      explode: false
+      schema:
+        pattern: "[0-9a-f]*"
+        type: string
+    matricula:
+      name: matricula
+      in: path
+      description: Matrícula del vehículo
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    vehiculoId:
+      name: vehiculoId
+      in: path
+      description: ID del vehículo.
+      required: true
+      style: simple
+      explode: false
+      schema:
+        pattern: ^\d+$
+        type: integer
+    VIN:
+      name: VIN
+      in: path
+      description: Número de identificación del vehículo (Vehicle Identification Number).
+      required: true
+      style: simple
+      explode: false
+      schema:
+        pattern: "[0-9A-Z]*"
+        type: string
+  examples:
+    response-http-400:
+      value:
+        type: https://httpstatuses.com/400
+        title: BAD REQUEST
+        status: 400
+        detail: Los datos introducidos no son válidos o falta algún valor.
+        instance: about:blank
+    response-http-401:
+      value:
+        type: https://httpstatuses.com/401
+        title: UNAUTHORIZED
+        status: 401
+        detail: No se cuenta con la autenticación válida de las credenciales necesarias
+          para este recurso.
+        instance: about:blank
+    response-http-403:
+      value:
+        type: https://httpstatuses.com/403
+        title: FORBIDDEN
+        status: 403
+        detail: El servidor entendió tu petición pero se niega a autorizarla.
+        instance: about:blank
+    response-http-404:
+      value:
+        type: https://httpstatuses.com/404
+        title: NOT FOUND
+        status: 404
+        detail: El recurso solicitado no está disponible.
+        instance: about:blank
+    response-http-422:
+      value:
+        type: https://httpstatuses.com/422
+        title: UNPROCESSABLE ENTITY
+        status: 422
+        detail: Falta la referencia o las unidades.
+        instance: about:blank
+    vehiculo:
+      value:
+      - id: 632
+        clientId: 32
+        matricula: 8472-ANK
+        marca: KIA
+        modelo: Sportage
+        color: Blanco
+        año: 2021
+        VIN: 1G8ZF52801Z328015
+    vehiculos:
+      value:
+      - id: 1111
+        clientId: 5
+        matricula: 7324-DBH
+        marca: Ford
+        modelo: Focus
+        color: Negro
+        año: 2017
+        VIN: 1B3BG26P3FX513068
+      - id: 137
+        clientId: 22
+        matricula: 2420-RPT
+        marca: Audi
+        modelo: a6
+        color: Azul
+        año: 2015
+        VIN: JH4KA3161HC006800
+  requestBodies:
+    vehiculoRB:
+      description: '`Vehiculo` data'
+      content:
+        application/json:
+          schema:
+            required:
+            - VIN
+            - año
+            - color
+            - marca
+            - matricula
+            - modelo
+            type: object
+            properties:
+              matricula:
+                type: string
+                description: Matrícula del vehículo.
+              marca:
+                type: string
+                description: Marca del vehículo.
+              modelo:
+                type: string
+                description: Modelo del vehículo.
+              color:
+                type: string
+                description: Color del vehículo.
+              año:
+                pattern: "[0-9]{4}"
+                type: number
+                description: Año de fabricación del vehículo.
+              VIN:
+                pattern: "[0-9A-Z]*"
+                type: string
+                description: Número de identificación del vehículo (Vehicle Identification
+                  Number).
+            example:
+              matricula: 7482-CJD
+              marca: BMW
+              modelo: 328i
+              color: Negro
+              año: 2012
+              VIN: JH4DA9460NS007560
+      required: true
+  headers:
+    Allow:
+      description: Lista de métodos HTTP soportados.
+      style: simple
+      explode: false
+      schema:
+        type: string
+      example: "GET,DELETE,PUT,OPTIONS"
+    ETag:
+      description: Entity Tag (identificador único proporcionado para validación de
+        caché).
+      style: simple
+      explode: false
+      schema:
+        pattern: "[0-9a-f]*"
+        type: string
+        example: 33a64df551425fcc
+        x-faker: random.uuid
+    Location:
+      description: '`URI` del nuevo recurso.'
+      style: simple
+      explode: false
+      schema:
+        type: string
+        format: url
+        example: /api/v1/vehiculo/7124
+        x-faker: internet.url
+
